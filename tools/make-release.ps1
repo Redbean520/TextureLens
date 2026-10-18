@@ -1,19 +1,18 @@
 ﻿<#
-  按 mod 打发布包：白名单只含游戏会读的文件，结构上不含 Source。
-  产出：dist\<ModName>\<ModName>-<版本>\ 和 .zip
-  用法：powershell -NoProfile -ExecutionPolicy Bypass -File tools\make-release.ps1 -ModName TextureLens
+  Texture Lens 发布包：白名单只含游戏会读的文件，结构上不含 Source。
+  产出：dist\<ModName>-<版本>\ 和 .zip
+  用法：powershell -NoProfile -ExecutionPolicy Bypass -File tools\make-release.ps1
   注意：本文件必须带 UTF-8 BOM，否则 Windows PowerShell 5.1 按 ANSI 读中文会语法报错。
 #>
 param(
-    [string]$ModName = 'TextureLens',
+    [string]$ModName = '',
     [string]$OutDir = ''
 )
 
 $ErrorActionPreference = 'Stop'
-$root = Split-Path -Parent $PSScriptRoot
-$modRoot = Join-Path $root ('mods\' + $ModName)
-if (-not (Test-Path -LiteralPath $modRoot)) { throw "找不到 mod 目录: $modRoot" }
-if (-not $OutDir) { $OutDir = Join-Path (Join-Path $root 'dist') $ModName }
+$modRoot = Split-Path -Parent $PSScriptRoot
+if (-not $ModName) { $ModName = Split-Path -Leaf $modRoot }
+if (-not $OutDir) { $OutDir = Join-Path $modRoot 'dist' }
 
 # ---- 版本号三处一致 ----
 $aboutPath = Join-Path $modRoot 'About\About.xml'
