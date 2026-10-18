@@ -3,7 +3,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// 全局快速查看快捷键（2.6.0 重写）。类名与 namespace 必须保留：旧存档 meta.modIds 里记录了它。
@@ -24,8 +24,8 @@ namespace ItemTextureViewer
 
         private void Tick()
         {
-            ItemTextureViewerSettings s = ItemTextureViewerMod.Settings;
-            if (s == null || ItemTextureViewerMod.WaitingForKey) return;
+            TextureLensSettings s = TextureLensMod.Settings;
+            if (s == null || TextureLensMod.WaitingForKey) return;
             if (s.quickViewKey == KeyCode.None) return;
 
             // 正在输入框里打字时不触发，避免误开窗口。
@@ -41,7 +41,7 @@ namespace ItemTextureViewer
 
             object target = ResolveTarget();
             if (target == null) return;
-            ItemTextureViewerMod.PendingTarget = target;
+            TextureLensMod.PendingTarget = target;
         }
 
         private static object ResolveTarget()

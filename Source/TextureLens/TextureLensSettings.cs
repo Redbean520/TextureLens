@@ -1,7 +1,7 @@
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     public enum PreviewAlignment { Left, Center, Right }
 
@@ -9,7 +9,7 @@ namespace ItemTextureViewer
     /// 本模组的持久化设置。字段名与 Scribe 键名与 2.5.0 完全保持一致，
     /// 老玩家的 ModSettings 文件可以无损升级。
     /// </summary>
-    public class ItemTextureViewerSettings : ModSettings
+    public class TextureLensSettings : ModSettings
     {
         // 信息卡 T 按钮偏移
         public float btnOffsetX = 19f;
@@ -87,7 +87,7 @@ namespace ItemTextureViewer
             if (ctrl) r += "Ctrl+";
             if (shift) r += "Shift+";
             if (alt) r += "Alt+";
-            if (key == KeyCode.None) r += "ItemTextureViewer_NotSet".Translate();
+            if (key == KeyCode.None) r += "TextureLens_NotSet".Translate();
             else r += key.ToString();
             return r;
         }
@@ -121,7 +121,7 @@ namespace ItemTextureViewer
             quickViewShift = false;
             quickViewAlt = false;
             currentZoom = 1f;
-            ItemTextureViewerMod.WaitingForKey = false;
+            TextureLensMod.WaitingForKey = false;
         }
 
         public override void ExposeData()

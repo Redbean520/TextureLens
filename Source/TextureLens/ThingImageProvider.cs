@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// 管理离屏渲染出来的 RenderTexture 缓存。
@@ -185,7 +185,7 @@ namespace ItemTextureViewer
         {
             RenderTexture rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32)
             {
-                name = "ItemTextureViewer_" + (label.NullOrEmpty() ? "texture" : label),
+                name = "TextureLens_" + (label.NullOrEmpty() ? "texture" : label),
                 filterMode = FilterMode.Bilinear,
                 wrapMode = TextureWrapMode.Clamp,
                 antiAliasing = 1,
@@ -221,7 +221,7 @@ namespace ItemTextureViewer
                 return;
             }
             warned = true;
-            Log.WarningOnce("[ItemTextureViewer] 贴图缓存异常: " + e.Message, 0x51AE7C);
+            Log.WarningOnce("[TextureLens] 贴图缓存异常: " + e.Message, 0x51AE7C);
         }
     }
 }

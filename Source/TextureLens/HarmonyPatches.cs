@@ -5,7 +5,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// Harmony 补丁集中处（2.6.0 重写）。只做两件事：
@@ -30,7 +30,7 @@ namespace ItemTextureViewer
 
                 if (infoCard == null)
                 {
-                    Log.Error("[ItemTextureViewer] 未找到 Dialog_InfoCard.DoWindowContents，信息卡 T 按钮不可用。");
+                    Log.Error("[TextureLens] 未找到 Dialog_InfoCard.DoWindowContents，信息卡 T 按钮不可用。");
                 }
                 else
                 {
@@ -39,7 +39,7 @@ namespace ItemTextureViewer
 
                 if (rootGui == null)
                 {
-                    Log.Error("[ItemTextureViewer] 未找到 Verse.Root.OnGUI，全局快速查看快捷键不可用。");
+                    Log.Error("[TextureLens] 未找到 Verse.Root.OnGUI，全局快速查看快捷键不可用。");
                 }
                 else
                 {
@@ -49,11 +49,11 @@ namespace ItemTextureViewer
                 // 2.8.0：让离屏预览复用地图绘制管线（动画 mod 的补丁才会生效）。
                 RenderHooks.Apply(harmony);
 
-                if (infoCard != null && rootGui != null) Log.Message("[ItemTextureViewer] Harmony 补丁已应用。");
+                if (infoCard != null && rootGui != null) Log.Message("[TextureLens] Harmony 补丁已应用。");
             }
             catch (Exception ex)
             {
-                Log.Error("[ItemTextureViewer] 应用 Harmony 补丁失败: " + ex);
+                Log.Error("[TextureLens] 应用 Harmony 补丁失败: " + ex);
             }
         }
 
@@ -65,26 +65,26 @@ namespace ItemTextureViewer
                 object target = InfoCardUtil.GetTarget(__instance);
                 if (target == null) return;
 
-                ItemTextureViewerSettings s = ItemTextureViewerMod.Settings;
+                TextureLensSettings s = TextureLensMod.Settings;
                 float offX = s != null ? s.btnOffsetX : 0f;
                 float offY = s != null ? s.btnOffsetY : 0f;
                 Rect rect = new Rect(inRect.xMax - 44f + offX, inRect.y + 30f + offY, 24f, 24f);
-                if (UIStyles.DrawButton(rect, "T", false, true, "ItemTextureViewer_ViewTextureTooltip".Translate()))
+                if (UIStyles.DrawButton(rect, "T", false, true, "TextureLens_ViewTextureTooltip".Translate()))
                 {
                     Find.WindowStack.Add(new TextureViewerWindow(ViewerTarget.From(target)));
                 }
             }
             catch (Exception ex)
             {
-                Log.ErrorOnce("[ItemTextureViewer] 信息卡 T 按钮异常: " + ex, 738291);
+                Log.ErrorOnce("[TextureLens] 信息卡 T 按钮异常: " + ex, 738291);
             }
         }
 
         private static void RootOnGuiPostfix()
         {
-            object pending = ItemTextureViewerMod.PendingTarget;
+            object pending = TextureLensMod.PendingTarget;
             if (pending == null) return;
-            ItemTextureViewerMod.PendingTarget = null;
+            TextureLensMod.PendingTarget = null;
             try
             {
                 ViewerTarget target = ViewerTarget.From(pending);
@@ -92,7 +92,7 @@ namespace ItemTextureViewer
             }
             catch (Exception ex)
             {
-                Log.Error("[ItemTextureViewer] 快速查看开窗失败: " + ex);
+                Log.Error("[TextureLens] 快速查看开窗失败: " + ex);
             }
         }
     }

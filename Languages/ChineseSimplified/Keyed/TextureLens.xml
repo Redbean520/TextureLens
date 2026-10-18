@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <TextureLens_SectionDisplay>═══ 显示与布局 ═══</TextureLens_SectionDisplay>
+  <TextureLens_SectionFeatures>═══ 功能与快捷键 ═══</TextureLens_SectionFeatures>
+  <TextureLens_SectionDiagnostics>═══ 诊断与工具 ═══</TextureLens_SectionDiagnostics>
+  <TextureLens_SettingsCategory>Texture Lens</TextureLens_SettingsCategory>
+  <TextureLens_ButtonHorizOffset>T按钮水平偏移: {0:F0}</TextureLens_ButtonHorizOffset>
+  <TextureLens_ButtonVertOffset>垂直偏移: {0:F0}</TextureLens_ButtonVertOffset>
+  <TextureLens_PreviewLayout>角色实时预览窗口</TextureLens_PreviewLayout>
+  <TextureLens_AutoPawnPreview>自动显示预览窗口</TextureLens_AutoPawnPreview>
+  <TextureLens_FollowInspectPane>跟随详情窗口</TextureLens_FollowInspectPane>
+  <TextureLens_PreviewAlignment>对齐方式</TextureLens_PreviewAlignment>
+  <TextureLens_PreviewAlignmentLeft>左对齐</TextureLens_PreviewAlignmentLeft>
+  <TextureLens_PreviewAlignmentCenter>居中</TextureLens_PreviewAlignmentCenter>
+  <TextureLens_PreviewAlignmentRight>右对齐</TextureLens_PreviewAlignmentRight>
+  <TextureLens_PreviewHorizontalOffset>水平偏移: {0:F0}</TextureLens_PreviewHorizontalOffset>
+  <TextureLens_PreviewVerticalGap>垂直间距: {0:F0}</TextureLens_PreviewVerticalGap>
+  <TextureLens_PreviewPosX>X: {0:F0}</TextureLens_PreviewPosX>
+  <TextureLens_PreviewPosY>Y: {0:F0}</TextureLens_PreviewPosY>
+  <TextureLens_PreviewZoom>预览缩放: {0:F1}</TextureLens_PreviewZoom>
+  <TextureLens_PreviewRefresh>刷新间隔: {0:F1}秒</TextureLens_PreviewRefresh>
+  <TextureLens_ShowPreviewDebug>预览窗口调试红框</TextureLens_ShowPreviewDebug>
+  <TextureLens_PreviewShowHumans>显示人类</TextureLens_PreviewShowHumans>
+  <TextureLens_PreviewShowAnimals>显示动物</TextureLens_PreviewShowAnimals>
+  <TextureLens_PreviewShowOthers>显示其他</TextureLens_PreviewShowOthers>
+  <TextureLens_VerboseLog>诊断日志（排查卡顿，默认关闭）</TextureLens_VerboseLog>
+  <TextureLens_QuickViewLabel>全局快速查看快捷键</TextureLens_QuickViewLabel>
+  <TextureLens_PressKeys>按下组合键 (可含Ctrl/Shift/Alt)...，ESC 取消</TextureLens_PressKeys>
+  <TextureLens_NotSet>未设置</TextureLens_NotSet>
+  <TextureLens_Reset>恢复默认设置</TextureLens_Reset>
+  <TextureLens_ConfirmReset>确定要把所有设置恢复默认吗？</TextureLens_ConfirmReset>
+  <TextureLens_ExportButton>导出(.png)</TextureLens_ExportButton>
+  <TextureLens_OpenExportFolder>打开导出文件夹</TextureLens_OpenExportFolder>
+  <TextureLens_FullscreenHint>缩放:{0:F2}x  ESC关闭</TextureLens_FullscreenHint>
+  <TextureLens_NoTexture>无贴图</TextureLens_NoTexture>
+  <TextureLens_ExportSuccess>贴图已导出</TextureLens_ExportSuccess>
+  <TextureLens_ExportFailed>无可用贴图</TextureLens_ExportFailed>
+  <TextureLens_ViewTextureTooltip>查看高清贴图</TextureLens_ViewTextureTooltip>
+  <TextureLens_OpenLarge>放大</TextureLens_OpenLarge>
+  <TextureLens_ZoomFit>适应</TextureLens_ZoomFit>
+  <TextureLens_KindPawn>角色</TextureLens_KindPawn>
+  <TextureLens_KindThing>物品</TextureLens_KindThing>
+  <TextureLens_ClearTextureCache>清空贴图缓存</TextureLens_ClearTextureCache>
+  <TextureLens_TextureCacheCleared>贴图缓存已清空</TextureLens_TextureCacheCleared>
+  <TextureLens_VersionInfo>版本 {0}</TextureLens_VersionInfo>
+  <TextureLens_HarmonyOk>Harmony 已加载</TextureLens_HarmonyOk>
+  <TextureLens_ViewerHint>滚轮缩放 · 拖动平移 · 双击适应 · ESC 关闭</TextureLens_ViewerHint>
+  <TextureLens_RotateHint>&lt; &gt; 旋转</TextureLens_RotateHint>
+  <TextureLens_PawnPreviewHint>滚轮缩放 · 拖动移动 · ESC 关闭</TextureLens_PawnPreviewHint>
+  <TextureLens_Dimensions>{0} × {1}</TextureLens_Dimensions>
+  <TextureLens_AnimatedSuffix>（动画）</TextureLens_AnimatedSuffix>
+  <TextureLens_PreviewContentZoom>内容缩放: {0:F1}x</TextureLens_PreviewContentZoom>
+  <TextureLens_PreviewTransparent>透明背景（只显示角色）</TextureLens_PreviewTransparent>
+  <TextureLens_PreviewControls>滚轮: 窗口大小 · Ctrl+滚轮: 缩放内容 · Ctrl+拖动: 平移 · 双击: 复位</TextureLens_PreviewControls>
+  <TextureLens_PreviewShowTab>显示预览</TextureLens_PreviewShowTab>
+  <TextureLens_PreviewShowTabTip>重新打开角色预览窗</TextureLens_PreviewShowTabTip>
+  <TextureLens_PreviewView>查看</TextureLens_PreviewView>
+  <TextureLens_PreviewViewTip>打开全屏查看窗</TextureLens_PreviewViewTip>
+  <TextureLens_PreviewCloseTip>关闭预览（原位置会出现「显示预览」按钮）</TextureLens_PreviewCloseTip>
+</LanguageData>

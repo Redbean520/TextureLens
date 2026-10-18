@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// 一张"游戏里看到的那张图"：纹理 + 可选 UI 材质（遮罩/双色上色）+ 颜色 + 旋转角 + 图标比例。
@@ -109,7 +109,7 @@ namespace ItemTextureViewer
                 return;
             }
             warned = true;
-            Log.WarningOnce("[ItemTextureViewer] 解析图标失败 (" + key + "): " + e.Message, 0x1A2B3C);
+            Log.WarningOnce("[TextureLens] 解析图标失败 (" + key + "): " + e.Message, 0x1A2B3C);
         }
     }
 }

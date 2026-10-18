@@ -5,7 +5,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// 角色贴图渲染器（2.8.0）：自己造一台离屏相机，用游戏「地图上的那条绘制管线」把 Pawn 画进 RenderTexture。
@@ -40,7 +40,7 @@ namespace ItemTextureViewer
             int s = Mathf.Clamp(size, 64, 2048);
             RenderTexture rt = new RenderTexture(s, s, 24, RenderTextureFormat.ARGB32)
             {
-                name = "ItemTextureViewer_Pawn",
+                name = "TextureLens_Pawn",
                 filterMode = FilterMode.Bilinear,
                 wrapMode = TextureWrapMode.Clamp,
                 antiAliasing = 1,
@@ -89,7 +89,7 @@ namespace ItemTextureViewer
                 cam.orthographicSize = 1f;
                 if (!inst.drew)
                 {
-                    Log.WarningOnce("[ItemTextureViewer] 角色相机没有触发绘制回调（立绘会是空的）", 0x51AE7F);
+                    Log.WarningOnce("[TextureLens] 角色相机没有触发绘制回调（立绘会是空的）", 0x51AE7F);
                     return false;
                 }
                 return true;
@@ -99,7 +99,7 @@ namespace ItemTextureViewer
                 if (!warned)
                 {
                     warned = true;
-                    Log.Warning("[ItemTextureViewer] 角色贴图渲染失败: " + e);
+                    Log.Warning("[TextureLens] 角色贴图渲染失败: " + e);
                 }
                 return false;
             }
@@ -138,7 +138,7 @@ namespace ItemTextureViewer
             }
             catch (Exception e)
             {
-                Log.WarningOnce("[ItemTextureViewer] 角色离屏绘制异常: " + e.Message, 0x51AE7E);
+                Log.WarningOnce("[TextureLens] 角色离屏绘制异常: " + e.Message, 0x51AE7E);
             }
             finally
             {
@@ -177,7 +177,7 @@ namespace ItemTextureViewer
                 if (!warned)
                 {
                     warned = true;
-                    Log.Warning("[ItemTextureViewer] 读取角色预渲染参数失败（动画将不可用）: " + e.Message);
+                    Log.Warning("[TextureLens] 读取角色预渲染参数失败（动画将不可用）: " + e.Message);
                 }
                 return false;
             }
@@ -199,14 +199,14 @@ namespace ItemTextureViewer
                 if (preRenderMethod == null)
                 {
                     reflectionFailed = true;
-                    Log.Warning("[ItemTextureViewer] 未找到 PawnRenderer.ParallelGetPreRenderResults，角色动画不可用。");
+                    Log.Warning("[TextureLens] 未找到 PawnRenderer.ParallelGetPreRenderResults，角色动画不可用。");
                     return false;
                 }
                 parmsField = preRenderMethod.ReturnType.GetField("parms", BindingFlags.Public | BindingFlags.Instance);
                 if (parmsField == null)
                 {
                     reflectionFailed = true;
-                    Log.Warning("[ItemTextureViewer] 未找到 PreRenderResults.parms，角色动画不可用。");
+                    Log.Warning("[TextureLens] 未找到 PreRenderResults.parms，角色动画不可用。");
                     return false;
                 }
                 return true;
@@ -214,7 +214,7 @@ namespace ItemTextureViewer
             catch (Exception e)
             {
                 reflectionFailed = true;
-                Log.Warning("[ItemTextureViewer] 角色预渲染反射初始化失败: " + e.Message);
+                Log.Warning("[TextureLens] 角色预渲染反射初始化失败: " + e.Message);
                 return false;
             }
         }
@@ -223,7 +223,7 @@ namespace ItemTextureViewer
         {
             try
             {
-                GameObject host = new GameObject("ItemTextureViewerPawnCamera", typeof(Camera));
+                GameObject host = new GameObject("TextureLensPawnCamera", typeof(Camera));
                 host.SetActive(false);
                 inst = host.AddComponent<PawnTextureRenderer>();
                 UnityEngine.Object.DontDestroyOnLoad(host);
@@ -250,7 +250,7 @@ namespace ItemTextureViewer
                 if (!warned)
                 {
                     warned = true;
-                    Log.Warning("[ItemTextureViewer] 无法创建角色离屏相机: " + e);
+                    Log.Warning("[TextureLens] 无法创建角色离屏相机: " + e);
                 }
                 return false;
             }

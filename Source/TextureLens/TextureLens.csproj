@@ -3,19 +3,19 @@
 
   <!--
     贴图透镜（Texture Lens）· 程序集
-    本工程由旧 Steam 工坊包（3718454442）的 Source\ItemTextureViewer\ItemTextureViewer.csproj 迁移而来，
+    本工程由旧 Steam 工坊包（3718454442）的 Source\TextureLens\TextureLens.csproj 迁移而来，
     手写的 <Reference>（指向本机游戏 Managed 目录）已换成工作区标准模板：
       - Krafs.Rimworld.Ref 提供 1.6.4871 的参考程序集（仅编译期，不进输出目录）
       - Lib.Harmony 2.4.2 提供 Harmony 编译引用 + 随包附带的 0Harmony.dll
-    版本号三处同步：这里 / ItemTextureViewerMod.cs 的 Version 常量 / About\About.xml 的 <modVersion>。
+    版本号三处同步：这里 / TextureLensMod.cs 的 Version 常量 / About\About.xml 的 <modVersion>。
   -->
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <LangVersion>latest</LangVersion>
 
-    <AssemblyName>ItemTextureViewer</AssemblyName>
-    <RootNamespace>ItemTextureViewer</RootNamespace>
+    <AssemblyName>TextureLens</AssemblyName>
+    <RootNamespace>TextureLens</RootNamespace>
 
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>

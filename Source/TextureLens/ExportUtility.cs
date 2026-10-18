@@ -4,7 +4,7 @@ using System.Text;
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// 把当前贴图 / 立绘导出成 PNG。
@@ -17,7 +17,7 @@ namespace ItemTextureViewer
         {
             get
             {
-                string dir = Path.Combine(Application.persistentDataPath, "ItemTextureViewer_Exports");
+                string dir = Path.Combine(Application.persistentDataPath, "TextureLens_Exports");
                 if (!Directory.Exists(dir))
                 {
                     Directory.CreateDirectory(dir);
@@ -63,7 +63,7 @@ namespace ItemTextureViewer
             }
             catch (Exception e)
             {
-                Log.Warning("[ItemTextureViewer] 导出失败: " + e);
+                Log.Warning("[TextureLens] 导出失败: " + e);
                 return false;
             }
             finally
@@ -120,7 +120,7 @@ namespace ItemTextureViewer
             }
             catch (Exception e)
             {
-                Log.Warning("[ItemTextureViewer] 导出失败: " + e);
+                Log.Warning("[TextureLens] 导出失败: " + e);
                 return false;
             }
             finally

@@ -1,7 +1,7 @@
 using RimWorld;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// 角色预览浮窗的调度组件（2.6.0 重写）。类名与 namespace 必须保留：旧存档 meta.modIds 里记录了它。
@@ -27,7 +27,7 @@ namespace ItemTextureViewer
 
         private void Tick()
         {
-            ItemTextureViewerSettings s = ItemTextureViewerMod.Settings;
+            TextureLensSettings s = TextureLensMod.Settings;
             if (s == null)
             {
                 CloseWindow();
@@ -57,11 +57,11 @@ namespace ItemTextureViewer
             }
             window.SetPawn(selected);
             // 点过 × 之后只显示角落的小按钮，点一下按钮即可重新打开（PreviewHidden 只在本次游戏内有效）。
-            window.Minimized = ItemTextureViewerMod.PreviewHidden;
+            window.Minimized = TextureLensMod.PreviewHidden;
             PositionWindow(window, s);
         }
 
-        private void PositionWindow(PawnPreviewWindow w, ItemTextureViewerSettings s)
+        private void PositionWindow(PawnPreviewWindow w, TextureLensSettings s)
         {
             // 跟随时位置由本组件每帧计算；非跟随模式用设置里的坐标（窗口本身不允许拖动，避免和每帧定位打架）。
             w.draggable = false;

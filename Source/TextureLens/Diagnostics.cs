@@ -2,19 +2,19 @@ using System;
 using System.Diagnostics;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// Opt-in timing diagnostics.
     /// Enable "Diagnostic logging" in the mod settings, reproduce a stutter/hitch,
-    /// then look for lines starting with [ItemTextureViewer] in RimWorld's Player.log.
+    /// then look for lines starting with [TextureLens] in RimWorld's Player.log.
     /// Disabled by default: when disabled the only cost is a bool check.
     /// </summary>
     public static class Diagnostics
     {
         private static readonly Stopwatch sw = new Stopwatch();
 
-        public static bool Enabled => ItemTextureViewerMod.Settings != null && ItemTextureViewerMod.Settings.verboseLog;
+        public static bool Enabled => TextureLensMod.Settings != null && TextureLensMod.Settings.verboseLog;
 
         /// <summary>Runs action and logs its duration when it takes at least thresholdMs.</summary>
         public static void Measure(string label, Action action, int thresholdMs = 20)
@@ -34,7 +34,7 @@ namespace ItemTextureViewer
             {
                 sw.Stop();
                 if (sw.ElapsedMilliseconds >= thresholdMs)
-                    Verse.Log.Message("[ItemTextureViewer] " + label + ": " + sw.ElapsedMilliseconds + " ms");
+                    Verse.Log.Message("[TextureLens] " + label + ": " + sw.ElapsedMilliseconds + " ms");
             }
         }
 
@@ -52,13 +52,13 @@ namespace ItemTextureViewer
             {
                 sw.Stop();
                 if (sw.ElapsedMilliseconds >= thresholdMs)
-                    Verse.Log.Message("[ItemTextureViewer] " + label + ": " + sw.ElapsedMilliseconds + " ms");
+                    Verse.Log.Message("[TextureLens] " + label + ": " + sw.ElapsedMilliseconds + " ms");
             }
         }
 
         public static void Info(string message)
         {
-            if (Enabled) Verse.Log.Message("[ItemTextureViewer] " + message);
+            if (Enabled) Verse.Log.Message("[TextureLens] " + message);
         }
     }
 }

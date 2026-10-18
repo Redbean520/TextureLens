@@ -1,6 +1,8 @@
 ﻿<#
-  Texture Lens 发布包：白名单只含游戏会读的文件，结构上不含 Source。
-  产出：dist\<ModName>-<版本>\ 和 .zip
+  打发布版：白名单只含游戏会读的文件，结构上不含 Source。
+  产出（默认）：
+    <工作区>\release\<ModName>\<ModName>-<版本>\      发布版 mod 文件（可直接挂游戏/上传工坊）
+    <工作区>\release\<ModName>\<ModName>-<版本>.zip   压缩包（挂 GitHub Release）
   用法：powershell -NoProfile -ExecutionPolicy Bypass -File tools\make-release.ps1
   注意：本文件必须带 UTF-8 BOM，否则 Windows PowerShell 5.1 按 ANSI 读中文会语法报错。
 #>
@@ -12,7 +14,16 @@ param(
 $ErrorActionPreference = 'Stop'
 $modRoot = Split-Path -Parent $PSScriptRoot
 if (-not $ModName) { $ModName = Split-Path -Leaf $modRoot }
-if (-not $OutDir) { $OutDir = Join-Path $modRoot 'dist' }
+
+# 默认输出到工作区 release\<mod>\；仓库单独放时退回到仓库内 release\
+if (-not $OutDir) {
+    $workspace = Split-Path -Parent (Split-Path -Parent $modRoot)
+    if ($workspace -and (Test-Path -LiteralPath (Join-Path $workspace 'mods'))) {
+        $OutDir = Join-Path (Join-Path $workspace 'release') $ModName
+    } else {
+        $OutDir = Join-Path $modRoot 'release'
+    }
+}
 
 # ---- 版本号三处一致 ----
 $aboutPath = Join-Path $modRoot 'About\About.xml'
@@ -51,6 +62,7 @@ if (Test-Path -LiteralPath $zip) { Remove-Item -LiteralPath $zip -Force }
 Compress-Archive -Path $dest -DestinationPath $zip -CompressionLevel Optimal
 
 $files = @(Get-ChildItem -LiteralPath $dest -Recurse -File -Force)
+Write-Host ("发布版目录：{0}" -f $dest)
 Write-Host ("包内文件：{0} 个 / {1:N2} MB" -f $files.Count, (($files | Measure-Object Length -Sum).Sum / 1MB))
-Write-Host ("发布包：{0} ({1:N0} B)" -f $zip, (Get-Item -LiteralPath $zip).Length)
+Write-Host ("压缩包：{0} ({1:N0} B)" -f $zip, (Get-Item -LiteralPath $zip).Length)
 Write-Host ("检查 Source 是否存在：{0}（应为 False）" -f (Test-Path -LiteralPath (Join-Path $dest 'Source')))

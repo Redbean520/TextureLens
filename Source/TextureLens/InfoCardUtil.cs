@@ -2,7 +2,7 @@ using System.Reflection;
 using HarmonyLib;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// 1.6 的 Dialog_InfoCard 把 thing / def 等字段放成了 private（Traverse 类型在本版本已不可用），

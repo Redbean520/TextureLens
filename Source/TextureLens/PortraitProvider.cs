@@ -3,7 +3,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// 角色立绘统一入口：封装 PortraitsCache 的尺寸/镜头参数，并处理 RT 过期（PortraitsCache 会销毁过期 RT）。
@@ -45,7 +45,7 @@ namespace ItemTextureViewer
                 if (!warned)
                 {
                     warned = true;
-                    Log.Warning("[ItemTextureViewer] 生成角色预览失败: " + e);
+                    Log.Warning("[TextureLens] 生成角色预览失败: " + e);
                 }
                 return null;
             }

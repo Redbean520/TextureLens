@@ -1,6 +1,6 @@
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>全屏查看窗口的输入：可能是被选中的 Thing、信息卡里的 Def、或选中的 Pawn。</summary>
     public class ViewerTarget

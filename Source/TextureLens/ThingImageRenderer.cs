@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// 用一台独立的离屏相机把 Graphic 画进 RenderTexture（相机参数照抄原版 PawnCacheCameraManager）。
@@ -101,7 +101,7 @@ namespace ItemTextureViewer
                 if (!instance.drewThisRender)
                 {
                     failed = true;
-                    Log.WarningOnce("[ItemTextureViewer] 离屏相机没有触发绘制回调，改用图标管线。", 0x51AE7D);
+                    Log.WarningOnce("[TextureLens] 离屏相机没有触发绘制回调，改用图标管线。", 0x51AE7D);
                     return false;
                 }
                 return true;
@@ -109,7 +109,7 @@ namespace ItemTextureViewer
             catch (Exception e)
             {
                 failed = true;
-                Log.Warning("[ItemTextureViewer] 离屏渲染失败，改用图标管线: " + e);
+                Log.Warning("[TextureLens] 离屏渲染失败，改用图标管线: " + e);
                 return false;
             }
             finally
@@ -148,7 +148,7 @@ namespace ItemTextureViewer
             catch (Exception e)
             {
                 drawFailed = true;
-                Log.WarningOnce("[ItemTextureViewer] 离屏绘制异常: " + e.Message, 0x51AE7B);
+                Log.WarningOnce("[TextureLens] 离屏绘制异常: " + e.Message, 0x51AE7B);
             }
             finally
             {
@@ -244,7 +244,7 @@ namespace ItemTextureViewer
 
             try
             {
-                GameObject host = new GameObject("ItemTextureViewerCamera", typeof(Camera));
+                GameObject host = new GameObject("TextureLensCamera", typeof(Camera));
                 host.SetActive(false);
                 instance = host.AddComponent<ThingImageRenderer>();
                 UnityEngine.Object.DontDestroyOnLoad(host);
@@ -269,7 +269,7 @@ namespace ItemTextureViewer
             catch (Exception e)
             {
                 failed = true;
-                Log.Warning("[ItemTextureViewer] 无法创建离屏相机: " + e);
+                Log.Warning("[TextureLens] 无法创建离屏相机: " + e);
                 return false;
             }
         }

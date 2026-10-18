@@ -1,7 +1,7 @@
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// 统一配色与自绘控件。所有窗口/设置页共用，避免各处重复处理 GUI.color / Text 状态。

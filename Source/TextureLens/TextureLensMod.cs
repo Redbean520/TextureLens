@@ -1,14 +1,14 @@
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
-    public class ItemTextureViewerMod : Mod
+    public class TextureLensMod : Mod
     {
         /// <summary>必须与 About.xml 的 modVersion、csproj 的 Version 一致。</summary>
         public const string Version = "2.8.1";
 
-        public static ItemTextureViewerSettings Settings;
+        public static TextureLensSettings Settings;
 
         /// <summary>设置页正在等待玩家按快捷键。</summary>
         public static bool WaitingForKey;
@@ -25,15 +25,15 @@ namespace ItemTextureViewer
         /// </summary>
         public static object PendingTarget;
 
-        public ItemTextureViewerMod(ModContentPack content) : base(content)
+        public TextureLensMod(ModContentPack content) : base(content)
         {
-            Settings = GetSettings<ItemTextureViewerSettings>();
+            Settings = GetSettings<TextureLensSettings>();
             HarmonyPatches.Initialize();
-            Log.Message("[ItemTextureViewer] loaded v" + Version);
+            Log.Message("[TextureLens] loaded v" + Version);
         }
 
         public override void DoSettingsWindowContents(Rect inRect) => SettingsUI.Draw(inRect);
 
-        public override string SettingsCategory() => "ItemTextureViewer_SettingsCategory".Translate();
+        public override string SettingsCategory() => "TextureLens_SettingsCategory".Translate();
     }
 }

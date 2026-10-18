@@ -2,7 +2,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// 角色实时预览浮窗（2.7.0 重做）：
@@ -41,7 +41,7 @@ namespace ItemTextureViewer
                 {
                     return new Vector2(TabW, TabH);
                 }
-                ItemTextureViewerSettings s = ItemTextureViewerMod.Settings;
+                TextureLensSettings s = TextureLensMod.Settings;
                 float zoom = s != null ? s.ClampedPreviewZoom : 0.4f;
                 float size = Mathf.Max(96f, TexSize * zoom);
                 return new Vector2(size, size);
@@ -110,11 +110,11 @@ namespace ItemTextureViewer
         {
             Widgets.DrawBoxSolid(inRect, new Color(0.07f, 0.07f, 0.09f, 0.72f));
             Widgets.DrawBoxSolidWithOutline(inRect, Color.clear, UIStyles.Border);
-            UIStyles.DrawText(inRect, "ItemTextureViewer_PreviewShowTab".Translate(), GameFont.Tiny, TextAnchor.MiddleCenter, UIStyles.TextColor);
-            TooltipHandler.TipRegion(inRect, new TipSignal("ItemTextureViewer_PreviewShowTabTip".Translate()));
+            UIStyles.DrawText(inRect, "TextureLens_PreviewShowTab".Translate(), GameFont.Tiny, TextAnchor.MiddleCenter, UIStyles.TextColor);
+            TooltipHandler.TipRegion(inRect, new TipSignal("TextureLens_PreviewShowTabTip".Translate()));
             if (Widgets.ButtonInvisible(inRect))
             {
-                ItemTextureViewerMod.PreviewHidden = false;
+                TextureLensMod.PreviewHidden = false;
                 lastRender = -999f;
             }
         }
@@ -123,7 +123,7 @@ namespace ItemTextureViewer
 
         private void DrawContent(Rect inRect)
         {
-            ItemTextureViewerSettings s = ItemTextureViewerMod.Settings;
+            TextureLensSettings s = TextureLensMod.Settings;
             bool transparent = s == null || s.previewTransparent;
             if (!transparent)
             {
@@ -140,7 +140,7 @@ namespace ItemTextureViewer
             }
             else
             {
-                UIStyles.DrawText(inRect, "ItemTextureViewer_NoTexture".Translate(), GameFont.Small, TextAnchor.MiddleCenter, UIStyles.TextDimColor);
+                UIStyles.DrawText(inRect, "TextureLens_NoTexture".Translate(), GameFont.Small, TextAnchor.MiddleCenter, UIStyles.TextDimColor);
             }
 
             if (s != null && s.showPreviewDebugArea)
@@ -169,16 +169,16 @@ namespace ItemTextureViewer
 
             Rect closeRect = new Rect(bar.xMax - 20f, bar.y + 2f, 18f, BarH - 4f);
             Rect viewRect = new Rect(closeRect.x - 40f, bar.y + 2f, 38f, BarH - 4f);
-            if (UIStyles.DrawButton(viewRect, "ItemTextureViewer_PreviewView".Translate(), false, true, "ItemTextureViewer_PreviewViewTip".Translate(), GameFont.Tiny))
+            if (UIStyles.DrawButton(viewRect, "TextureLens_PreviewView".Translate(), false, true, "TextureLens_PreviewViewTip".Translate(), GameFont.Tiny))
             {
                 if (pawn != null)
                 {
                     Find.WindowStack.Add(new TextureViewerWindow(ViewerTarget.From(pawn)));
                 }
             }
-            if (UIStyles.DrawButton(closeRect, "×", false, true, "ItemTextureViewer_PreviewCloseTip".Translate(), GameFont.Tiny))
+            if (UIStyles.DrawButton(closeRect, "×", false, true, "TextureLens_PreviewCloseTip".Translate(), GameFont.Tiny))
             {
-                ItemTextureViewerMod.PreviewHidden = true;
+                TextureLensMod.PreviewHidden = true;
             }
 
             // 窗口太小时不画提示条，避免文字被裁得很难看。
@@ -186,7 +186,7 @@ namespace ItemTextureViewer
             {
                 Rect hint = new Rect(inRect.x, inRect.yMax - HintH, inRect.width, HintH);
                 Widgets.DrawBoxSolid(hint, new Color(0f, 0f, 0f, 0.35f));
-                UIStyles.DrawText(hint, "ItemTextureViewer_PreviewControls".Translate(), GameFont.Tiny, TextAnchor.MiddleCenter, UIStyles.TextDimColor);
+                UIStyles.DrawText(hint, "TextureLens_PreviewControls".Translate(), GameFont.Tiny, TextAnchor.MiddleCenter, UIStyles.TextDimColor);
             }
         }
 
@@ -204,7 +204,7 @@ namespace ItemTextureViewer
                 lastRender = -999f;
             }
 
-            ItemTextureViewerSettings s = ItemTextureViewerMod.Settings;
+            TextureLensSettings s = TextureLensMod.Settings;
             float contentZoom = s != null ? s.ClampedPreviewContentZoom : 1f;
             if (Time.realtimeSinceStartup - lastRender >= RefreshInterval)
             {
@@ -218,7 +218,7 @@ namespace ItemTextureViewer
         {
             get
             {
-                ItemTextureViewerSettings s = ItemTextureViewerMod.Settings;
+                TextureLensSettings s = TextureLensMod.Settings;
                 return s != null ? Mathf.Max(0.02f, s.previewRefreshInterval) : 0.033f;
             }
         }
@@ -230,7 +230,7 @@ namespace ItemTextureViewer
             {
                 return;
             }
-            ItemTextureViewerSettings s = ItemTextureViewerMod.Settings;
+            TextureLensSettings s = TextureLensMod.Settings;
             if (s == null)
             {
                 return;
@@ -301,7 +301,7 @@ namespace ItemTextureViewer
         /// <summary>按屏幕像素位移平移画面内容：换算成世界坐标后作用在相机上。</summary>
         private void PanBy(Vector2 deltaPixels)
         {
-            ItemTextureViewerSettings s = ItemTextureViewerMod.Settings;
+            TextureLensSettings s = TextureLensMod.Settings;
             float contentZoom = s != null ? s.ClampedPreviewContentZoom : 1f;
             float zoom = Mathf.Max(0.05f, PortraitProvider.CameraZoomFor(TexSize) * contentZoom);
             float orthoSize = 1f / zoom;

@@ -5,7 +5,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// 让「预览窗/查看窗的离屏渲染」复用游戏在地图上那条真实的绘制管线（含动画 mod 的补丁）。
@@ -49,7 +49,7 @@ namespace ItemTextureViewer
             }
             catch (Exception e)
             {
-                Log.Error("[ItemTextureViewer] 注册渲染钩子失败: " + e);
+                Log.Error("[TextureLens] 注册渲染钩子失败: " + e);
             }
         }
 

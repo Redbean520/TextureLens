@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <TextureLens_SectionDisplay>═══ Display &amp; Layout ═══</TextureLens_SectionDisplay>
+  <TextureLens_SectionFeatures>═══ Features &amp; Hotkeys ═══</TextureLens_SectionFeatures>
+  <TextureLens_SectionDiagnostics>═══ Diagnostics &amp; Tools ═══</TextureLens_SectionDiagnostics>
+  <TextureLens_SettingsCategory>Texture Lens</TextureLens_SettingsCategory>
+  <TextureLens_ButtonHorizOffset>T button horizontal offset: {0:F0}</TextureLens_ButtonHorizOffset>
+  <TextureLens_ButtonVertOffset>Vertical offset: {0:F0}</TextureLens_ButtonVertOffset>
+  <TextureLens_PreviewLayout>Live pawn preview</TextureLens_PreviewLayout>
+  <TextureLens_AutoPawnPreview>Show pawn preview automatically</TextureLens_AutoPawnPreview>
+  <TextureLens_FollowInspectPane>Follow the inspect pane</TextureLens_FollowInspectPane>
+  <TextureLens_PreviewAlignment>Alignment</TextureLens_PreviewAlignment>
+  <TextureLens_PreviewAlignmentLeft>Left</TextureLens_PreviewAlignmentLeft>
+  <TextureLens_PreviewAlignmentCenter>Center</TextureLens_PreviewAlignmentCenter>
+  <TextureLens_PreviewAlignmentRight>Right</TextureLens_PreviewAlignmentRight>
+  <TextureLens_PreviewHorizontalOffset>Horizontal offset: {0:F0}</TextureLens_PreviewHorizontalOffset>
+  <TextureLens_PreviewVerticalGap>Vertical gap: {0:F0}</TextureLens_PreviewVerticalGap>
+  <TextureLens_PreviewPosX>X: {0:F0}</TextureLens_PreviewPosX>
+  <TextureLens_PreviewPosY>Y: {0:F0}</TextureLens_PreviewPosY>
+  <TextureLens_PreviewZoom>Preview zoom: {0:F1}</TextureLens_PreviewZoom>
+  <TextureLens_PreviewRefresh>Refresh interval: {0:F1}s</TextureLens_PreviewRefresh>
+  <TextureLens_ShowPreviewDebug>Preview debug frame</TextureLens_ShowPreviewDebug>
+  <TextureLens_PreviewShowHumans>Show humans</TextureLens_PreviewShowHumans>
+  <TextureLens_PreviewShowAnimals>Show animals</TextureLens_PreviewShowAnimals>
+  <TextureLens_PreviewShowOthers>Show others</TextureLens_PreviewShowOthers>
+  <TextureLens_VerboseLog>Diagnostic log (for stutter troubleshooting, off by default)</TextureLens_VerboseLog>
+  <TextureLens_QuickViewLabel>Global quick-view hotkey</TextureLens_QuickViewLabel>
+  <TextureLens_PressKeys>Press a key combination (Ctrl/Shift/Alt allowed)..., ESC to cancel</TextureLens_PressKeys>
+  <TextureLens_NotSet>Not set</TextureLens_NotSet>
+  <TextureLens_Reset>Reset to defaults</TextureLens_Reset>
+  <TextureLens_ConfirmReset>Reset all settings to their defaults?</TextureLens_ConfirmReset>
+  <TextureLens_ExportButton>Export (.png)</TextureLens_ExportButton>
+  <TextureLens_OpenExportFolder>Open export folder</TextureLens_OpenExportFolder>
+  <TextureLens_FullscreenHint>Zoom: {0:F2}x  ESC to close</TextureLens_FullscreenHint>
+  <TextureLens_NoTexture>No texture</TextureLens_NoTexture>
+  <TextureLens_ExportSuccess>Texture exported</TextureLens_ExportSuccess>
+  <TextureLens_ExportFailed>No texture available</TextureLens_ExportFailed>
+  <TextureLens_ViewTextureTooltip>View high-resolution texture</TextureLens_ViewTextureTooltip>
+  <TextureLens_OpenLarge>Enlarge</TextureLens_OpenLarge>
+  <TextureLens_ZoomFit>Fit</TextureLens_ZoomFit>
+  <TextureLens_KindPawn>Pawn</TextureLens_KindPawn>
+  <TextureLens_KindThing>Item</TextureLens_KindThing>
+  <TextureLens_ClearTextureCache>Clear texture cache</TextureLens_ClearTextureCache>
+  <TextureLens_TextureCacheCleared>Texture cache cleared</TextureLens_TextureCacheCleared>
+  <TextureLens_VersionInfo>Version {0}</TextureLens_VersionInfo>
+  <TextureLens_HarmonyOk>Harmony loaded</TextureLens_HarmonyOk>
+  <TextureLens_ViewerHint>Wheel: zoom · Drag: pan · Double-click: fit · ESC: close</TextureLens_ViewerHint>
+  <TextureLens_RotateHint>&lt; &gt; rotate</TextureLens_RotateHint>
+  <TextureLens_PawnPreviewHint>Wheel: zoom · Drag: move · ESC: close</TextureLens_PawnPreviewHint>
+  <TextureLens_Dimensions>{0} × {1}</TextureLens_Dimensions>
+  <TextureLens_AnimatedSuffix> (animated)</TextureLens_AnimatedSuffix>
+  <TextureLens_PreviewContentZoom>Content zoom: {0:F1}x</TextureLens_PreviewContentZoom>
+  <TextureLens_PreviewTransparent>Transparent background (pawn only)</TextureLens_PreviewTransparent>
+  <TextureLens_PreviewControls>Wheel: window size · Ctrl+Wheel: zoom content · Ctrl+Drag: pan · Double-click: reset</TextureLens_PreviewControls>
+  <TextureLens_PreviewShowTab>Show preview</TextureLens_PreviewShowTab>
+  <TextureLens_PreviewShowTabTip>Reopen the pawn preview window</TextureLens_PreviewShowTabTip>
+  <TextureLens_PreviewView>View</TextureLens_PreviewView>
+  <TextureLens_PreviewViewTip>Open full-screen texture viewer</TextureLens_PreviewViewTip>
+  <TextureLens_PreviewCloseTip>Close preview (a "Show preview" button appears here)</TextureLens_PreviewCloseTip>
+</LanguageData>

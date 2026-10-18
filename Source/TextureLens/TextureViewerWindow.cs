@@ -4,7 +4,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace ItemTextureViewer
+namespace TextureLens
 {
     /// <summary>
     /// 全屏贴图查看窗（2.6.3）。
@@ -51,7 +51,7 @@ namespace ItemTextureViewer
         public TextureViewerWindow(ViewerTarget target)
         {
             this.target = target;
-            ItemTextureViewerSettings settings = ItemTextureViewerMod.Settings;
+            TextureLensSettings settings = TextureLensMod.Settings;
             if (settings != null)
             {
                 if (settings.lastSelectedSize > 0)
@@ -86,7 +86,7 @@ namespace ItemTextureViewer
         public override void PreOpen()
         {
             base.PreOpen();
-            ItemTextureViewerSettings settings = ItemTextureViewerMod.Settings;
+            TextureLensSettings settings = TextureLensMod.Settings;
             if (settings == null)
             {
                 return;
@@ -102,7 +102,7 @@ namespace ItemTextureViewer
         {
             get
             {
-                ItemTextureViewerSettings settings = ItemTextureViewerMod.Settings;
+                TextureLensSettings settings = TextureLensMod.Settings;
                 return settings != null ? Mathf.Max(0.02f, settings.previewRefreshInterval) : 0.033f;
             }
         }
@@ -134,12 +134,12 @@ namespace ItemTextureViewer
             Widgets.DrawBoxSolid(header, UIStyles.HeaderBg);
 
             string kind = target.IsPawn
-                ? "ItemTextureViewer_KindPawn".Translate().ToString()
-                : "ItemTextureViewer_KindThing".Translate().ToString();
+                ? "TextureLens_KindPawn".Translate().ToString()
+                : "TextureLens_KindThing".Translate().ToString();
             string title = kind + " · " + target.Label;
             if (!target.IsPawn && thingAnimated)
             {
-                title += "  " + "ItemTextureViewer_AnimatedSuffix".Translate().ToString();
+                title += "  " + "TextureLens_AnimatedSuffix".Translate().ToString();
             }
             UIStyles.DrawText(new Rect(header.x + Pad, header.y, header.width - 60f, header.height), title, GameFont.Medium, TextAnchor.MiddleLeft, UIStyles.TextColor);
 
@@ -160,7 +160,7 @@ namespace ItemTextureViewer
         {
             Widgets.DrawBoxSolid(body, UIStyles.ViewerBg);
             Rect canvas = body.ContractedBy(Pad);
-            TooltipHandler.TipRegion(canvas, new TipSignal("ItemTextureViewer_ViewerHint".Translate()));
+            TooltipHandler.TipRegion(canvas, new TipSignal("TextureLens_ViewerHint".Translate()));
 
             if (!ResolveContent(out Texture tex, out Vector2 proportions, out Material material, out Color tint, out float angle))
             {
@@ -199,7 +199,7 @@ namespace ItemTextureViewer
                 GUI.EndGroup();
             }
 
-            UIStyles.DrawText(new Rect(canvas.x + 4f, canvas.yMax - 20f, 260f, 18f), "ItemTextureViewer_Dimensions".Translate(tex.width, tex.height), GameFont.Tiny, TextAnchor.MiddleLeft, UIStyles.TextDimColor);
+            UIStyles.DrawText(new Rect(canvas.x + 4f, canvas.yMax - 20f, 260f, 18f), "TextureLens_Dimensions".Translate(tex.width, tex.height), GameFont.Tiny, TextAnchor.MiddleLeft, UIStyles.TextDimColor);
         }
 
         /// <summary>
@@ -319,7 +319,7 @@ namespace ItemTextureViewer
             }
             catch (Exception e)
             {
-                Log.WarningOnce("[ItemTextureViewer] 取 Graphic 失败: " + e.Message, 0x51AE7D);
+                Log.WarningOnce("[TextureLens] 取 Graphic 失败: " + e.Message, 0x51AE7D);
             }
             return null;
         }
@@ -431,7 +431,7 @@ namespace ItemTextureViewer
                 Widgets.ThingIcon(new Rect(canvas.center.x - h * 0.5f, canvas.center.y - h * 0.5f, h, h), target.thingDef);
                 return;
             }
-            UIStyles.DrawText(canvas, "ItemTextureViewer_NoTexture".Translate(), GameFont.Medium, TextAnchor.MiddleCenter, UIStyles.TextDimColor);
+            UIStyles.DrawText(canvas, "TextureLens_NoTexture".Translate(), GameFont.Medium, TextAnchor.MiddleCenter, UIStyles.TextDimColor);
         }
 
         // ---------- 底栏 ----------
@@ -442,12 +442,12 @@ namespace ItemTextureViewer
             float y = footer.y + (FooterH - ButtonH) * 0.5f;
             float x = footer.x + Pad;
 
-            if (UIStyles.DrawButton(new Rect(x, y, 26f, ButtonH), "<", false, true, "ItemTextureViewer_RotateHint".Translate()))
+            if (UIStyles.DrawButton(new Rect(x, y, 26f, ButtonH), "<", false, true, "TextureLens_RotateHint".Translate()))
             {
                 Rotate(-1);
             }
             x += 30f;
-            if (UIStyles.DrawButton(new Rect(x, y, 26f, ButtonH), ">", false, true, "ItemTextureViewer_RotateHint".Translate()))
+            if (UIStyles.DrawButton(new Rect(x, y, 26f, ButtonH), ">", false, true, "TextureLens_RotateHint".Translate()))
             {
                 Rotate(1);
             }
@@ -477,7 +477,7 @@ namespace ItemTextureViewer
             float bw = 78f;
             Rect fitRect = new Rect(footer.xMax - Pad - bw, y, bw, ButtonH);
             Rect exportRect = new Rect(fitRect.x - bw - 6f, y, bw, ButtonH);
-            if (UIStyles.DrawButton(fitRect, "ItemTextureViewer_ZoomFit".Translate(), false, true, null, GameFont.Tiny))
+            if (UIStyles.DrawButton(fitRect, "TextureLens_ZoomFit".Translate(), false, true, null, GameFont.Tiny))
             {
                 Fit();
             }
@@ -489,7 +489,7 @@ namespace ItemTextureViewer
             bool hover = Mouse.IsOver(rect);
             Widgets.DrawBoxSolid(rect, hover ? UIStyles.PanelHover : UIStyles.PanelBg);
             Widgets.DrawBoxSolidWithOutline(rect, Color.clear, UIStyles.Border);
-            UIStyles.DrawText(rect, "ItemTextureViewer_ExportButton".Translate(), GameFont.Tiny, TextAnchor.MiddleCenter, UIStyles.TextColor);
+            UIStyles.DrawText(rect, "TextureLens_ExportButton".Translate(), GameFont.Tiny, TextAnchor.MiddleCenter, UIStyles.TextColor);
             if (!hover)
             {
                 return;
@@ -510,7 +510,7 @@ namespace ItemTextureViewer
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>
                 {
-                    new FloatMenuOption("ItemTextureViewer_OpenExportFolder".Translate(), ExportUtility.OpenExportFolder)
+                    new FloatMenuOption("TextureLens_OpenExportFolder".Translate(), ExportUtility.OpenExportFolder)
                 };
                 Find.WindowStack.Add(new FloatMenu(options));
                 ev.Use();
@@ -543,14 +543,14 @@ namespace ItemTextureViewer
                 IconInfo info = FallbackIcon();
                 if (!info.valid)
                 {
-                    Messages.Message("ItemTextureViewer_ExportFailed".Translate(), MessageTypeDefOf.RejectInput);
+                    Messages.Message("TextureLens_ExportFailed".Translate(), MessageTypeDefOf.RejectInput);
                     return;
                 }
                 Color exportTint = info.material != null ? Color.white : info.color;
                 ok = Diagnostics.Measure("Export PNG", () => ExportUtility.Export(info.texture, exportTint, info.material, info.angle, name, out string _), 1);
             }
 
-            Messages.Message(ok ? "ItemTextureViewer_ExportSuccess".Translate() : "ItemTextureViewer_ExportFailed".Translate(), ok ? MessageTypeDefOf.TaskCompletion : MessageTypeDefOf.RejectInput);
+            Messages.Message(ok ? "TextureLens_ExportSuccess".Translate() : "TextureLens_ExportFailed".Translate(), ok ? MessageTypeDefOf.TaskCompletion : MessageTypeDefOf.RejectInput);
         }
 
         // ---------- 状态变更 ----------
@@ -617,7 +617,7 @@ namespace ItemTextureViewer
         {
             base.PreClose();
             ReleasePawnTexture();
-            ItemTextureViewerSettings settings = ItemTextureViewerMod.Settings;
+            TextureLensSettings settings = TextureLensMod.Settings;
             if (settings == null)
             {
                 return;
