@@ -15,3 +15,6 @@ dist/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# 工坊上传 ID（游戏生成，只留本地，不提交）
+About/PublishedFileId.txt
