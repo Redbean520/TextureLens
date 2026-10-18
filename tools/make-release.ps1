@@ -1,5 +1,5 @@
 ﻿<#
-  打发布版：白名单只含游戏会读的文件，结构上不含 Source。
+  打发布版：白名单只含游戏会读的文件，结构上不含 Source，也不含工坊上传 ID。
   产出（默认）：
     <工作区>\release\<ModName>\<ModName>-<版本>\      发布版 mod 文件（可直接挂游戏/上传工坊）
     <工作区>\release\<ModName>\<ModName>-<版本>.zip   压缩包（挂 GitHub Release）
@@ -56,6 +56,8 @@ foreach ($item in $include) {
 }
 Get-ChildItem -LiteralPath $dest -Recurse -Directory -Force | Where-Object { $_.Name -in @('bin', 'obj') } | Remove-Item -Recurse -Force
 Get-ChildItem -LiteralPath $dest -Recurse -File -Force | Where-Object { $_.Extension -in @('.pdb', '.user') } | Remove-Item -Force
+# 工坊上传 ID 只留本地，绝不进发布包（否则玩家/公开下载会看到，且下次上传可能判定错）
+Remove-Item -LiteralPath (Join-Path $dest 'About\PublishedFileId.txt') -Force -ErrorAction SilentlyContinue
 
 $zip = $dest + '.zip'
 if (Test-Path -LiteralPath $zip) { Remove-Item -LiteralPath $zip -Force }
@@ -66,3 +68,4 @@ Write-Host ("发布版目录：{0}" -f $dest)
 Write-Host ("包内文件：{0} 个 / {1:N2} MB" -f $files.Count, (($files | Measure-Object Length -Sum).Sum / 1MB))
 Write-Host ("压缩包：{0} ({1:N0} B)" -f $zip, (Get-Item -LiteralPath $zip).Length)
 Write-Host ("检查 Source 是否存在：{0}（应为 False）" -f (Test-Path -LiteralPath (Join-Path $dest 'Source')))
+Write-Host ("检查 PublishedFileId.txt：{0}（应为 False）" -f (Test-Path -LiteralPath (Join-Path $dest 'About\PublishedFileId.txt')))
