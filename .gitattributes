@@ -1,0 +1,13 @@
+* text=auto eol=lf
+
+*.ps1    text
+*.cs     text
+*.csproj text
+*.xml    text
+*.md     text
+*.json   text
+
+*.dll    binary
+*.png    binary
+*.jpg    binary
+*.zip    binary

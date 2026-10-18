@@ -1,0 +1,17 @@
+# 构建中间物
+**/bin/
+**/obj/
+*.pdb
+*.user
+*.suo
+.vs/
+.idea/
+
+# 打包产物（构建产物，由 tag 重建）
+dist/
+*.zip
+
+# 系统
+Thumbs.db
+desktop.ini
+.DS_Store

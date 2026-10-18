@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>Texture Lens</name>
+  <author>Redbean</author>
+  <packageId>redbean.texturelens</packageId>
+  <description>物品与角色贴图查看器。信息卡右上角按 T（或全局快捷键）打开高清查看窗：物品贴图按游戏真实材质渲染，颜色/遮罩与地图一致；角色立绘实时渲染，支持待机动作与征召时显示手中武器；透明悬浮预览窗支持 Ctrl+滚轮缩放内容；另支持朝向旋转、128~2048 多档尺寸与 PNG 导出（自动裁透明边）。需要 Harmony。\n\nHigh-resolution texture viewer for items and pawns. Press T on an info card (or use the hotkey) to open the viewer: item textures use the game's real materials; pawns render live with idle animation and equipped weapons; the transparent floating preview supports Ctrl+wheel zoom; also rotation, 128-2048 render sizes and PNG export. Requires Harmony.</description>
+  <supportedVersions><li>1.6</li></supportedVersions>
+  <modDependencies>
+    <li>
+      <packageId>brrainz.harmony</packageId>
+      <displayName>Harmony</displayName>
+      <steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
+    </li>
+  </modDependencies>
+  <loadAfter><li>brrainz.harmony</li></loadAfter>
+  <modVersion>2.8.1</modVersion>
+</ModMetaData>
