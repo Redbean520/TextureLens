@@ -42,7 +42,7 @@
   <TextureLens_KindThing>Item</TextureLens_KindThing>
   <TextureLens_Kind3DModel>3D model</TextureLens_Kind3DModel>
   <TextureLens_Show3DModel>3D model</TextureLens_Show3DModel>
-  <TextureLens_Show3DTooltip>Show the 3D model rendered by IsoRim (Waylith) instead of the vanilla 2D texture.</TextureLens_Show3DTooltip>
+  <TextureLens_Show3DTooltip>Show the 3D model rendered by IsoRim (Waylith) instead of the vanilla 2D texture / portrait.</TextureLens_Show3DTooltip>
   <TextureLens_ClearTextureCache>Clear texture cache</TextureLens_ClearTextureCache>
   <TextureLens_TextureCacheCleared>Texture cache cleared</TextureLens_TextureCacheCleared>
   <TextureLens_VersionInfo>Version {0}</TextureLens_VersionInfo>

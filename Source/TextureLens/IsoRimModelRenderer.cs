@@ -112,7 +112,6 @@ namespace TextureLens
             }
 
             Material outline = IsoRimBridge.OutlineMaterial;
-            Matrix4x4 matrix = target.matrix;
             List<IsoRimPart> parts = target.parts;
             for (int i = 0; i < parts.Count; i++)
             {
@@ -132,7 +131,8 @@ namespace TextureLens
                     {
                         continue;
                     }
-                    Graphics.DrawMeshNow(part.mesh, matrix);
+                    // 物品/建筑的部件共用视图矩阵；角色的每个部件自带 figure 空间矩阵（脚在原点、真空间）。
+                    Graphics.DrawMeshNow(part.mesh, part.hasMatrix ? part.matrix : target.matrix);
                 }
                 catch (Exception e)
                 {

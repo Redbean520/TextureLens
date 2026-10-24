@@ -25,7 +25,7 @@
     <Deterministic>true</Deterministic>
     <DebugType>portable</DebugType>
 
-    <Version>2.10.0</Version>
+    <Version>2.11.0</Version>
     <Company>Redbean</Company>
     <Product>Texture Lens</Product>
     <NoWarn>CS1591</NoWarn>

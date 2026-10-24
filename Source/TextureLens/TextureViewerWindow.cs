@@ -42,7 +42,7 @@ namespace TextureLens
         private IconInfo icon;
         private bool iconResolved;
 
-        // 2.10.0：IsoRim（Waylith 的 3D 渲染 Mod）的模型预览。
+        // 2.10.0：IsoRim（Waylith 的 3D 渲染 Mod）的物品/建筑模型预览；2.11.0 起角色也走 3D。
         // 装了就优先显示 3D 模型；没装 / 这个物体没模型 / 渲染失败 → 完全走原来的 2D 管线。
         private RenderTexture modelTexture;
         private int modelTextureWidth;
@@ -50,6 +50,15 @@ namespace TextureLens
         private bool modelAvailable;
         private bool modelResolved;
         private bool modelDirty = true;
+
+        // 2.11.0：角色（人 / 动物 / 机械体）的 IsoRim 3D figure 预览。
+        // 角色是动的，所以这张 RT 按刷新间隔重画；没有 IsoRim 或画不出 figure 时完全回退 2D 立绘。
+        private RenderTexture pawnModelTexture;
+        private int pawnModelTextureWidth;
+        private int pawnModelTextureHeight;
+        private float lastPawnModelRender = -999f;
+        private bool pawnModelAvailable;
+        private bool pawnModelFailed;
 
         /// <summary>当前是否显示 3D 模型（可在页脚切换，并记进设置）。</summary>
         private static bool Show3D
@@ -66,9 +75,13 @@ namespace TextureLens
         {
             get
             {
-                if (target == null || target.IsPawn || !Show3D || !IsoRimBridge.Available)
+                if (target == null || !Show3D || !IsoRimBridge.Available)
                 {
                     return false;
+                }
+                if (target.IsPawn)
+                {
+                    return target.pawn != null && IsoRimBridge.CanPreviewPawn(target.pawn);
                 }
                 return IsoRimBridge.HasModelFor(target.thing, target.thingDef);
             }
@@ -165,10 +178,10 @@ namespace TextureLens
         {
             Widgets.DrawBoxSolid(header, UIStyles.HeaderBg);
 
-            string kind = target.IsPawn
-                ? "TextureLens_KindPawn".Translate().ToString()
-                : (Showing3DModel
-                    ? "TextureLens_Kind3DModel".Translate().ToString()
+            string kind = Showing3DModel
+                ? "TextureLens_Kind3DModel".Translate().ToString()
+                : (target.IsPawn
+                    ? "TextureLens_KindPawn".Translate().ToString()
                     : "TextureLens_KindThing".Translate().ToString());
             string title = kind + " · " + target.Label;
             if (!target.IsPawn && thingAnimated)
@@ -259,6 +272,15 @@ namespace TextureLens
                 {
                     return false;
                 }
+                // 2.11.0：装了 IsoRim 时，角色优先显示它画的 3D figure；失败自动回退下面的 2D 立绘。
+                pawnModelAvailable = IsoRimBridge.CanPreviewPawn(pawn);
+                if (Show3D && pawnModelAvailable && EnsurePawnModelTexture(pawn))
+                {
+                    tex = pawnModelTexture;
+                    proportions = new Vector2(pawnModelTexture.width, pawnModelTexture.height);
+                    return true;
+                }
+
                 EnsurePawnTexture(pawn);
                 if (pawnTexture == null || !pawnTexture.IsCreated())
                 {
@@ -373,14 +395,50 @@ namespace TextureLens
                 return false;
             }
             modelAvailable = true;
-            RenderModelTexture(view);
+            RenderModelTexture(view, ref modelTexture, ref modelTextureWidth, ref modelTextureHeight, 1024, "TextureLens_IsoRimModel");
             return modelTexture != null && modelTexture.IsCreated();
         }
 
-        private void RenderModelTexture(IsoRimModelView view)
+        /// <summary>
+        /// 角色 3D 贴图：按刷新间隔让 IsoRim 重新画一次 figure（角色在呼吸、瞄准、走动，不能只渲染一次）。
+        /// 失败就永久回退这个角色的 2D 立绘，不反复尝试。
+        /// </summary>
+        private bool EnsurePawnModelTexture(Pawn pawn)
         {
-            const int longEdge = 1024;
-            float aspect = Mathf.Clamp(view.halfWidth / Mathf.Max(0.0001f, view.halfHeight), 0.4f, 2.5f);
+            if (pawnModelFailed)
+            {
+                return false;
+            }
+            int size = Mathf.Clamp(selectedSize, 128, 2048);
+            float interval = Mathf.Max(RefreshInterval, 0.1f);
+            if (pawnModelTexture != null && pawnModelTexture.IsCreated()
+                && Time.realtimeSinceStartup - lastPawnModelRender < interval)
+            {
+                return true;
+            }
+
+            IsoRimModelView view;
+            if (!IsoRimBridge.TryGetPawnView(pawn, rot, out view))
+            {
+                pawnModelAvailable = false;
+                pawnModelFailed = true;
+                return false;
+            }
+            pawnModelAvailable = true;
+            bool ok = RenderModelTexture(view, ref pawnModelTexture, ref pawnModelTextureWidth, ref pawnModelTextureHeight, size, "TextureLens_IsoRimPawn");
+            if (!ok)
+            {
+                pawnModelAvailable = false;
+                pawnModelFailed = true;
+                return false;
+            }
+            lastPawnModelRender = Time.realtimeSinceStartup;
+            return true;
+        }
+
+        private bool RenderModelTexture(IsoRimModelView view, ref RenderTexture target, ref int texWidth, ref int texHeight, int longEdge, string label)
+        {
+            float aspect = Mathf.Clamp(view.halfWidth / Mathf.Max(0.0001f, view.halfHeight), 0.25f, 2.5f);
             int width;
             int height;
             if (aspect >= 1f)
@@ -394,47 +452,64 @@ namespace TextureLens
                 width = Mathf.Clamp(Mathf.RoundToInt(longEdge * aspect), 64, longEdge);
             }
 
-            if (modelTexture == null || !modelTexture.IsCreated() || modelTextureWidth != width || modelTextureHeight != height)
+            if (target == null || !target.IsCreated() || texWidth != width || texHeight != height)
             {
-                ReleaseModelTexture();
-                modelTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32)
+                ReleaseTexture(ref target);
+                target = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32)
                 {
-                    name = "TextureLens_IsoRimModel",
+                    name = label,
                     filterMode = FilterMode.Bilinear,
                     wrapMode = TextureWrapMode.Clamp,
                     antiAliasing = 1,
                     useMipMap = false,
                     autoGenerateMips = false
                 };
-                modelTexture.Create();
-                modelTextureWidth = width;
-                modelTextureHeight = height;
+                target.Create();
+                texWidth = width;
+                texHeight = height;
             }
 
+            RenderTexture renderTarget = target;
             bool ok = Diagnostics.Measure("Viewer 3D render", delegate
             {
-                return IsoRimModelRenderer.Render(view, modelTexture);
+                return IsoRimModelRenderer.Render(view, renderTarget);
             }, 4);
             if (!ok)
             {
-                ReleaseModelTexture();
-                modelAvailable = false;
+                ReleaseTexture(ref target);
+                texWidth = 0;
+                texHeight = 0;
+            }
+            return ok;
+        }
+
+        /// <summary>释放一张自建的 RenderTexture（RT 是窗口自己建的，必须自己销毁）。</summary>
+        private static void ReleaseTexture(ref RenderTexture tex)
+        {
+            if (tex != null)
+            {
+                if (tex.IsCreated())
+                {
+                    tex.Release();
+                }
+                UnityEngine.Object.Destroy(tex);
+                tex = null;
             }
         }
 
         private void ReleaseModelTexture()
         {
-            if (modelTexture != null)
-            {
-                if (modelTexture.IsCreated())
-                {
-                    modelTexture.Release();
-                }
-                UnityEngine.Object.Destroy(modelTexture);
-                modelTexture = null;
-            }
+            ReleaseTexture(ref modelTexture);
             modelTextureWidth = 0;
             modelTextureHeight = 0;
+        }
+
+        private void ReleasePawnModelTexture()
+        {
+            ReleaseTexture(ref pawnModelTexture);
+            pawnModelTextureWidth = 0;
+            pawnModelTextureHeight = 0;
+            lastPawnModelRender = -999f;
         }
 
         private void ToggleModelView()
@@ -446,6 +521,8 @@ namespace TextureLens
                 settings.Write();
             }
             modelDirty = true;
+            pawnModelFailed = false;       // 再试一次：可能是玩家刚切回 3D 视角
+            lastPawnModelRender = -999f;
         }
 
         private Graphic CurrentGraphic()
@@ -598,8 +675,8 @@ namespace TextureLens
             }
             x += 36f;
 
-            // 2.10.0：装了 IsoRim 且这个物品有 3D 模型时，多一个「3D 模型 / 原版贴图」切换按钮
-            if (modelAvailable)
+            // 2.10.0：装了 IsoRim 且有 3D 模型（2.11.0 起角色也算）时，多一个「3D 模型 / 原版贴图」切换按钮
+            if (modelAvailable || pawnModelAvailable)
             {
                 if (UIStyles.DrawButton(new Rect(x, y, 74f, ButtonH), "TextureLens_Show3DModel".Translate(), Show3D, true, "TextureLens_Show3DTooltip".Translate(), GameFont.Tiny))
                 {
@@ -689,7 +766,14 @@ namespace TextureLens
             RenderTexture ready;
             if (target.IsPawn)
             {
-                ready = pawnTexture != null && pawnTexture.IsCreated() ? pawnTexture : null;
+                if (Show3D && pawnModelTexture != null && pawnModelTexture.IsCreated())
+                {
+                    ready = pawnModelTexture;
+                }
+                else
+                {
+                    ready = pawnTexture != null && pawnTexture.IsCreated() ? pawnTexture : null;
+                }
             }
             else if (Show3D && modelTexture != null && modelTexture.IsCreated())
             {
@@ -730,6 +814,7 @@ namespace TextureLens
         {
             selectedSize = size;
             ReleasePawnTexture();
+            lastPawnModelRender = -999f;   // 3D 角色按新分辨率重渲染
         }
 
         private void InvalidateContent()
@@ -739,6 +824,8 @@ namespace TextureLens
             thingTexture = null;
             iconResolved = false;
             modelDirty = true;   // 3D 模型也要按新朝向重渲染
+            lastPawnModelRender = -999f;
+            pawnModelFailed = false;
         }
 
         private void HandleKeys()
@@ -784,6 +871,7 @@ namespace TextureLens
             base.PreClose();
             ReleasePawnTexture();
             ReleaseModelTexture();
+            ReleasePawnModelTexture();
             TextureLensSettings settings = TextureLensMod.Settings;
             if (settings == null)
             {
