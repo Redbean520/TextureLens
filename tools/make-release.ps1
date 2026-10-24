@@ -46,7 +46,7 @@ if ($verProj -and $verAbout -ne $verProj) { throw 'About.xml 与 csproj 版本�
 if ($verAbout -ne $verCs) { throw 'About.xml 与 Mod.cs 版本号不一致' }
 
 # ---- 白名单复制 ----
-$include = @('About', 'Assemblies', 'Defs', 'Languages', 'Textures', 'Sounds', 'Patches', 'LoadFolders.xml')
+$include = @('About', '1.6', '1.7', 'Defs', 'Languages', 'Textures', 'Sounds', 'Patches', 'LoadFolders.xml')
 $dest = Join-Path $OutDir ("{0}-{1}" -f $ModName, $verAbout)
 if (Test-Path -LiteralPath $dest) { Remove-Item -LiteralPath $dest -Recurse -Force }
 New-Item -ItemType Directory -Path $dest -Force | Out-Null

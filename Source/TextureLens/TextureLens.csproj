@@ -2,16 +2,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    贴图透镜（Texture Lens）· 程序集
-    本工程由旧 Steam 工坊包（3718454442）的 Source\TextureLens\TextureLens.csproj 迁移而来，
-    手写的 <Reference>（指向本机游戏 Managed 目录）已换成工作区标准模板：
-      - Krafs.Rimworld.Ref 提供 1.6.4871 的参考程序集（仅编译期，不进输出目录）
-      - Lib.Harmony 2.4.2 提供 Harmony 编译引用 + 随包附带的 0Harmony.dll
+    贴图透镜（Texture Lens）· 程序集，同时支持 RimWorld 1.6 与 1.7：
+      - 1.6 用 net472 + Krafs.Rimworld.Ref 1.6.4871 + Harmony 2.4.2，产物落到 1.6\Assemblies
+        （游戏跑 Mono，需要随包附带 0Harmony.dll）
+      - 1.7 用 net10.0 + Krafs.Rimworld.Ref 1.7.4985-unstable + Harmony 3.0.0-rc.3，产物落到 1.7\Assemblies
+        （0Harmony 由 brrainz.harmony 模组在运行时提供，本模组不再自带）
+    LoadFolders.xml 按游戏版本只加载对应目录。
     版本号三处同步：这里 / TextureLensMod.cs 的 Version 常量 / About\About.xml 的 <modVersion>。
   -->
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFrameworks>net472;net10.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
 
     <AssemblyName>TextureLens</AssemblyName>
@@ -20,34 +21,45 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
 
-    <!-- RimWorld 不认 TFM 子目录，输出必须平铺 -->
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Deterministic>true</Deterministic>
     <DebugType>portable</DebugType>
 
-    <Version>2.8.1</Version>
+    <Version>2.9.0</Version>
     <Company>Redbean</Company>
     <Product>Texture Lens</Product>
     <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
     <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4871" />
     <PackageReference Include="Lib.Harmony" Version="2.4.2" ExcludeAssets="runtime" GeneratePathProperty="true" />
   </ItemGroup>
 
-  <!-- 编译产物直接落到 mod 的 Assemblies/ 下 -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.7.4985-unstable" />
+    <PackageReference Include="Lib.Harmony" Version="3.0.0-rc.3" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net472'">
+    <ModVersionFolder>1.6</ModVersionFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <ModVersionFolder>1.7</ModVersionFolder>
+  </PropertyGroup>
+
+  <!-- 编译产物直接落到 mod 的 <版本>\Assemblies\ 下 -->
   <Target Name="CopyToModAssemblies" AfterTargets="Build">
     <Copy SourceFiles="$(TargetPath)"
-          DestinationFolder="$(MSBuildProjectDirectory)\..\..\Assemblies"
+          DestinationFolder="$(MSBuildProjectDirectory)\..\..\$(ModVersionFolder)\Assemblies"
           SkipUnchangedFiles="true" />
   </Target>
 
-  <!-- 附带 Harmony 运行时（net472，游戏跑 Mono）。0Harmony.dll 的 "0" 前缀让 RimWorld 先加载它。 -->
-  <Target Name="CopyHarmonyRuntime" AfterTargets="Build" Condition="Exists('$(PkgLib_Harmony)\lib\net472\0Harmony.dll')">
+  <!-- 1.6 附带 Harmony 运行时（net472，游戏跑 Mono）。0Harmony.dll 的 "0" 前缀让 RimWorld 先加载它。 -->
+  <Target Name="CopyHarmonyRuntime" AfterTargets="Build"
+          Condition="'$(TargetFramework)' == 'net472' and Exists('$(PkgLib_Harmony)\lib\net472\0Harmony.dll')">
     <Copy SourceFiles="$(PkgLib_Harmony)\lib\net472\0Harmony.dll"
-          DestinationFolder="$(MSBuildProjectDirectory)\..\..\Assemblies"
+          DestinationFolder="$(MSBuildProjectDirectory)\..\..\1.6\Assemblies"
           SkipUnchangedFiles="true" />
   </Target>
 
