@@ -40,6 +40,9 @@
   <TextureLens_ZoomFit>适应</TextureLens_ZoomFit>
   <TextureLens_KindPawn>角色</TextureLens_KindPawn>
   <TextureLens_KindThing>物品</TextureLens_KindThing>
+  <TextureLens_Kind3DModel>3D 模型</TextureLens_Kind3DModel>
+  <TextureLens_Show3DModel>3D 模型</TextureLens_Show3DModel>
+  <TextureLens_Show3DTooltip>显示 IsoRim（Waylith）渲染的 3D 模型，而不是原版 2D 贴图。</TextureLens_Show3DTooltip>
   <TextureLens_ClearTextureCache>清空贴图缓存</TextureLens_ClearTextureCache>
   <TextureLens_TextureCacheCleared>贴图缓存已清空</TextureLens_TextureCacheCleared>
   <TextureLens_VersionInfo>版本 {0}</TextureLens_VersionInfo>

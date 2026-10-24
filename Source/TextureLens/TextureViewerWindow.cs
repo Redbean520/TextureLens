@@ -42,6 +42,38 @@ namespace TextureLens
         private IconInfo icon;
         private bool iconResolved;
 
+        // 2.10.0：IsoRim（Waylith 的 3D 渲染 Mod）的模型预览。
+        // 装了就优先显示 3D 模型；没装 / 这个物体没模型 / 渲染失败 → 完全走原来的 2D 管线。
+        private RenderTexture modelTexture;
+        private int modelTextureWidth;
+        private int modelTextureHeight;
+        private bool modelAvailable;
+        private bool modelResolved;
+        private bool modelDirty = true;
+
+        /// <summary>当前是否显示 3D 模型（可在页脚切换，并记进设置）。</summary>
+        private static bool Show3D
+        {
+            get
+            {
+                TextureLensSettings settings = TextureLensMod.Settings;
+                return settings == null || settings.viewerShow3D;
+            }
+        }
+
+        /// <summary>这个物体在 IsoRim 里有 3D 模型、且当前选择显示 3D 模型。</summary>
+        private bool Showing3DModel
+        {
+            get
+            {
+                if (target == null || target.IsPawn || !Show3D || !IsoRimBridge.Available)
+                {
+                    return false;
+                }
+                return IsoRimBridge.HasModelFor(target.thing, target.thingDef);
+            }
+        }
+
         private bool draggingCanvas;
         private Vector2 lastMouse;
 
@@ -135,7 +167,9 @@ namespace TextureLens
 
             string kind = target.IsPawn
                 ? "TextureLens_KindPawn".Translate().ToString()
-                : "TextureLens_KindThing".Translate().ToString();
+                : (Showing3DModel
+                    ? "TextureLens_Kind3DModel".Translate().ToString()
+                    : "TextureLens_KindThing".Translate().ToString());
             string title = kind + " · " + target.Label;
             if (!target.IsPawn && thingAnimated)
             {
@@ -235,6 +269,22 @@ namespace TextureLens
                 return true;
             }
 
+            // 2.10.0：装了 IsoRim 且这个动物品有 3D 模型时，优先显示 3D 模型（比贴图直观）。
+            if (IsoRimBridge.Available)
+            {
+                modelAvailable = IsoRimBridge.HasModelFor(target.thing, target.thingDef);
+                if (modelAvailable && Show3D && EnsureModelTexture())
+                {
+                    tex = modelTexture;
+                    proportions = new Vector2(modelTexture.width, modelTexture.height);
+                    return true;
+                }
+            }
+            else
+            {
+                modelAvailable = false;
+            }
+
             Graphic graphic = CurrentGraphic();
             if (graphic != null)
             {
@@ -301,6 +351,101 @@ namespace TextureLens
             PawnTextureRenderer.Release(ref pawnTexture);
             pawnTextureSize = 0;
             lastPawnRender = -999f;
+        }
+
+        /// <summary>
+        /// 3D 模型贴图：只在朝向 / 目标变化（modelDirty）之后重新渲染一次并缓存。
+        /// 模型是静态的，不需要像角色那样按帧刷新。
+        /// </summary>
+        private bool EnsureModelTexture()
+        {
+            if (modelResolved && !modelDirty)
+            {
+                return modelAvailable && modelTexture != null && modelTexture.IsCreated();
+            }
+            modelDirty = false;
+            modelResolved = true;
+
+            IsoRimModelView view;
+            if (!IsoRimBridge.TryGetModelView(target.thing, target.thingDef, rot, out view))
+            {
+                modelAvailable = false;
+                return false;
+            }
+            modelAvailable = true;
+            RenderModelTexture(view);
+            return modelTexture != null && modelTexture.IsCreated();
+        }
+
+        private void RenderModelTexture(IsoRimModelView view)
+        {
+            const int longEdge = 1024;
+            float aspect = Mathf.Clamp(view.halfWidth / Mathf.Max(0.0001f, view.halfHeight), 0.4f, 2.5f);
+            int width;
+            int height;
+            if (aspect >= 1f)
+            {
+                width = longEdge;
+                height = Mathf.Clamp(Mathf.RoundToInt(longEdge / aspect), 64, longEdge);
+            }
+            else
+            {
+                height = longEdge;
+                width = Mathf.Clamp(Mathf.RoundToInt(longEdge * aspect), 64, longEdge);
+            }
+
+            if (modelTexture == null || !modelTexture.IsCreated() || modelTextureWidth != width || modelTextureHeight != height)
+            {
+                ReleaseModelTexture();
+                modelTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32)
+                {
+                    name = "TextureLens_IsoRimModel",
+                    filterMode = FilterMode.Bilinear,
+                    wrapMode = TextureWrapMode.Clamp,
+                    antiAliasing = 1,
+                    useMipMap = false,
+                    autoGenerateMips = false
+                };
+                modelTexture.Create();
+                modelTextureWidth = width;
+                modelTextureHeight = height;
+            }
+
+            bool ok = Diagnostics.Measure("Viewer 3D render", delegate
+            {
+                return IsoRimModelRenderer.Render(view, modelTexture);
+            }, 4);
+            if (!ok)
+            {
+                ReleaseModelTexture();
+                modelAvailable = false;
+            }
+        }
+
+        private void ReleaseModelTexture()
+        {
+            if (modelTexture != null)
+            {
+                if (modelTexture.IsCreated())
+                {
+                    modelTexture.Release();
+                }
+                UnityEngine.Object.Destroy(modelTexture);
+                modelTexture = null;
+            }
+            modelTextureWidth = 0;
+            modelTextureHeight = 0;
+        }
+
+        private void ToggleModelView()
+        {
+            TextureLensSettings settings = TextureLensMod.Settings;
+            if (settings != null)
+            {
+                settings.viewerShow3D = !Show3D;
+                settings.Write();
+            }
+            modelDirty = true;
         }
 
         private Graphic CurrentGraphic()
@@ -453,6 +598,16 @@ namespace TextureLens
             }
             x += 36f;
 
+            // 2.10.0：装了 IsoRim 且这个物品有 3D 模型时，多一个「3D 模型 / 原版贴图」切换按钮
+            if (modelAvailable)
+            {
+                if (UIStyles.DrawButton(new Rect(x, y, 74f, ButtonH), "TextureLens_Show3DModel".Translate(), Show3D, true, "TextureLens_Show3DTooltip".Translate(), GameFont.Tiny))
+                {
+                    ToggleModelView();
+                }
+                x += 80f;
+            }
+
             if (target.IsPawn)
             {
                 int current = Array.IndexOf(PortraitProvider.Sizes, selectedSize);
@@ -531,9 +686,19 @@ namespace TextureLens
             }
 
             bool ok;
-            RenderTexture ready = target.IsPawn
-                ? (pawnTexture != null && pawnTexture.IsCreated() ? pawnTexture : null)
-                : (thingTexture != null && thingTexture.IsCreated() ? thingTexture : null);
+            RenderTexture ready;
+            if (target.IsPawn)
+            {
+                ready = pawnTexture != null && pawnTexture.IsCreated() ? pawnTexture : null;
+            }
+            else if (Show3D && modelTexture != null && modelTexture.IsCreated())
+            {
+                ready = modelTexture;
+            }
+            else
+            {
+                ready = thingTexture != null && thingTexture.IsCreated() ? thingTexture : null;
+            }
             if (ready != null)
             {
                 ok = Diagnostics.Measure("Export PNG", () => ExportUtility.Export(ready, name, out string _), 1);
@@ -573,6 +738,7 @@ namespace TextureLens
             lastPawnRender = -999f;
             thingTexture = null;
             iconResolved = false;
+            modelDirty = true;   // 3D 模型也要按新朝向重渲染
         }
 
         private void HandleKeys()
@@ -617,6 +783,7 @@ namespace TextureLens
         {
             base.PreClose();
             ReleasePawnTexture();
+            ReleaseModelTexture();
             TextureLensSettings settings = TextureLensMod.Settings;
             if (settings == null)
             {

@@ -49,6 +49,9 @@ namespace TextureLens
         public float lastWindowZoom = 1f;
         public int lastSelectedSize = 1024;
 
+        // 只有在装了 IsoRim（Waylith 3D 渲染 Mod）时才有意义：查看窗默认显示 3D 模型
+        public bool viewerShow3D = true;
+
         /// <summary>预览窗缩放的安全区间，窗口与设置页共用。</summary>
         public float ClampedPreviewZoom
         {
@@ -121,6 +124,7 @@ namespace TextureLens
             quickViewShift = false;
             quickViewAlt = false;
             currentZoom = 1f;
+            viewerShow3D = true;
             TextureLensMod.WaitingForKey = false;
         }
 
@@ -154,6 +158,7 @@ namespace TextureLens
             Scribe_Values.Look(ref quickViewShift, "quickViewShift", false);
             Scribe_Values.Look(ref quickViewAlt, "quickViewAlt", false);
             Scribe_Values.Look(ref currentZoom, "currentZoom", 1f);
+            Scribe_Values.Look(ref viewerShow3D, "viewerShow3D", true);
         }
     }
 }
