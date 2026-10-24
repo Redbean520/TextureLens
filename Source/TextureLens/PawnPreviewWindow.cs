@@ -28,6 +28,13 @@ namespace TextureLens
         private bool draggingContent;
         private Vector2 lastDragMouse;
 
+        // 2.12.0：装了 IsoRim 时，浮窗里直接用它的 3D 模型（和查看窗共用同一套离屏渲染管线）
+        private RenderTexture modelTex;
+        private int modelTexSize;
+        private float lastModelRender = -999f;
+        private bool using3D;
+        private bool modelFailed;
+
         /// <summary>被玩家点 × 收起时为 true，窗口只画一个小按钮。</summary>
         public bool Minimized;
 
@@ -79,11 +86,14 @@ namespace TextureLens
             pawn = p;
             camPan = Vector2.zero;
             lastRender = -999f;
+            lastModelRender = -999f;
+            modelFailed = false;
         }
 
         public void Invalidate()
         {
             lastRender = -999f;
+            lastModelRender = -999f;
         }
 
         public override void DoWindowContents(Rect inRect)
@@ -102,6 +112,9 @@ namespace TextureLens
             PawnTextureRenderer.Release(ref tex);
             texSize = 0;
             lastRender = -999f;
+            PawnTextureRenderer.Release(ref modelTex);
+            modelTexSize = 0;
+            lastModelRender = -999f;
         }
 
         // ---------- 收起后的小按钮 ----------
@@ -165,10 +178,28 @@ namespace TextureLens
             Widgets.DrawBoxSolid(bar, new Color(0f, 0f, 0f, 0.45f));
 
             string label = pawn != null && pawn.Name != null ? pawn.Name.ToStringShort : string.Empty;
-            UIStyles.DrawText(new Rect(bar.x + 4f, bar.y, Mathf.Max(0f, bar.width - 96f), bar.height), label, GameFont.Tiny, TextAnchor.MiddleLeft, UIStyles.TextColor);
+            UIStyles.DrawText(new Rect(bar.x + 4f, bar.y, Mathf.Max(0f, bar.width - 126f), bar.height), label, GameFont.Tiny, TextAnchor.MiddleLeft, UIStyles.TextColor);
 
             Rect closeRect = new Rect(bar.xMax - 20f, bar.y + 2f, 18f, BarH - 4f);
             Rect viewRect = new Rect(closeRect.x - 40f, bar.y + 2f, 38f, BarH - 4f);
+            // 2.12.0：装了 IsoRim（且这个角色能画成 3D figure）时，多一个 3D / 立绘切换按钮
+            if (IsoRimBridge.CanPreviewPawn(pawn))
+            {
+                TextureLensSettings st = TextureLensMod.Settings;
+                bool on = st != null && st.previewShow3D;
+                Rect modelRect = new Rect(viewRect.x - 30f, bar.y + 2f, 28f, BarH - 4f);
+                if (UIStyles.DrawButton(modelRect, "3D", on, true, "TextureLens_Show3DTooltip".Translate(), GameFont.Tiny))
+                {
+                    if (st != null)
+                    {
+                        st.previewShow3D = !on;
+                        st.Write();
+                    }
+                    lastRender = -999f;
+                    lastModelRender = -999f;
+                    modelFailed = false;
+                }
+            }
             if (UIStyles.DrawButton(viewRect, "TextureLens_PreviewView".Translate(), false, true, "TextureLens_PreviewViewTip".Translate(), GameFont.Tiny))
             {
                 if (pawn != null)
@@ -196,6 +227,26 @@ namespace TextureLens
             {
                 return null;
             }
+
+            bool want3D = ShouldUse3D();
+            if (want3D != using3D)
+            {
+                // 2D 立绘 / 3D 模型切换：两条管线各有一份缓存，切换时都要重画一次。
+                using3D = want3D;
+                lastRender = -999f;
+                lastModelRender = -999f;
+            }
+            if (using3D)
+            {
+                RenderTexture model = EnsureModelTexture();
+                if (model != null)
+                {
+                    return model;
+                }
+                // 这一帧 3D 没画出来（模型还没准备好 / 离屏相机失败）：先回退 2D，下一帧再试。
+                using3D = false;
+            }
+
             if (tex == null || !tex.IsCreated() || texSize != TexSize)
             {
                 PawnTextureRenderer.Release(ref tex);
@@ -212,6 +263,57 @@ namespace TextureLens
                 lastRender = Time.realtimeSinceStartup;
             }
             return tex != null && tex.IsCreated() ? tex : null;
+        }
+
+        /// <summary>
+        /// 这个角色现在该画 IsoRim 的 3D 模型还是原版 2D 立绘。
+        /// 没装 IsoRim、设置里关掉了、或者之前渲染失败过，都会回退 2D。
+        /// </summary>
+        private bool ShouldUse3D()
+        {
+            TextureLensSettings s = TextureLensMod.Settings;
+            return s != null && s.previewShow3D && !modelFailed && IsoRimBridge.CanPreviewPawn(pawn);
+        }
+
+        /// <summary>
+        /// 把角色按 IsoRim 的 3D figure 画进浮窗的 RT。缩放 / 平移语义与 2D 立绘一致：
+        /// contentZoom 直接交给渲染器，camPan 先换算成「画面高度的几分之几」。
+        /// </summary>
+        private RenderTexture EnsureModelTexture()
+        {
+            TextureLensSettings s = TextureLensMod.Settings;
+            if (s == null)
+            {
+                return null;
+            }
+            if (modelTex == null || !modelTex.IsCreated() || modelTexSize != TexSize)
+            {
+                PawnTextureRenderer.Release(ref modelTex);
+                modelTex = PawnTextureRenderer.Create(TexSize);
+                modelTexSize = TexSize;
+                lastModelRender = -999f;
+            }
+            // 3D 模型每次刷新都要把角色重新截一遍部件（衣服、头发、手持武器、动作都在里面），
+            // 比 2D 立绘贵，刷新间隔再小也没意义，和查看窗一样至少 0.05 秒。
+            float interval = Mathf.Max(0.05f, RefreshInterval);
+            if (Time.realtimeSinceStartup - lastModelRender >= interval)
+            {
+                IsoRimModelView view;
+                if (!IsoRimBridge.TryGetPawnView(pawn, Rot4.South, out view))
+                {
+                    modelFailed = true;
+                    return null;
+                }
+                float ortho2D = 1f / Mathf.Max(0.05f, PortraitProvider.CameraZoomFor(TexSize) * s.ClampedPreviewContentZoom);
+                Vector2 pan = new Vector2(camPan.x / (2f * ortho2D), camPan.y / (2f * ortho2D));
+                if (!IsoRimModelRenderer.Render(view, modelTex, s.ClampedPreviewContentZoom, pan))
+                {
+                    modelFailed = true;
+                    return null;
+                }
+                lastModelRender = Time.realtimeSinceStartup;
+            }
+            return modelTex != null && modelTex.IsCreated() ? modelTex : null;
         }
 
         private float RefreshInterval

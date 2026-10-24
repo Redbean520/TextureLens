@@ -54,6 +54,7 @@
   <TextureLens_AnimatedSuffix> (animated)</TextureLens_AnimatedSuffix>
   <TextureLens_PreviewContentZoom>Content zoom: {0:F1}x</TextureLens_PreviewContentZoom>
   <TextureLens_PreviewTransparent>Transparent background (pawn only)</TextureLens_PreviewTransparent>
+  <TextureLens_PreviewShow3D>Pawn preview: use IsoRim 3D model (requires IsoRim Waylith)</TextureLens_PreviewShow3D>
   <TextureLens_PreviewControls>Wheel: window size · Ctrl+Wheel: zoom content · Ctrl+Drag: pan · Double-click: reset</TextureLens_PreviewControls>
   <TextureLens_PreviewShowTab>Show preview</TextureLens_PreviewShowTab>
   <TextureLens_PreviewShowTabTip>Reopen the pawn preview window</TextureLens_PreviewShowTabTip>

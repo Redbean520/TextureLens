@@ -6,7 +6,7 @@ namespace TextureLens
     public class TextureLensMod : Mod
     {
         /// <summary>必须与 About.xml 的 modVersion、csproj 的 Version 一致。</summary>
-        public const string Version = "2.11.0";
+        public const string Version = "2.12.0";
 
         public static TextureLensSettings Settings;
 

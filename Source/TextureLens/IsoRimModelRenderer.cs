@@ -27,6 +27,16 @@ namespace TextureLens
         /// <summary>把 model view 渲染进 rt。失败返回 false（调用方回退 2D 贴图）。</summary>
         public static bool Render(IsoRimModelView target, RenderTexture rt)
         {
+            return Render(target, rt, 1f, Vector2.zero);
+        }
+
+        /// <summary>
+        /// 带内容缩放 / 平移的版本（角色预览浮窗用）：contentZoom 只改正交相机大小（1 = 原样），
+        /// panNormalized 是「画面高度的几分之几」，与 2D 立绘管线里 camPan 的归一化结果对齐，
+        /// 这样拖动时内容跟手的像素数和 2D 完全一样。
+        /// </summary>
+        public static bool Render(IsoRimModelView target, RenderTexture rt, float contentZoom, Vector2 panNormalized)
+        {
             if (failed || target == null || rt == null || !rt.IsCreated())
             {
                 return false;
@@ -47,12 +57,20 @@ namespace TextureLens
             try
             {
                 float aspect = rt.width / (float)Mathf.Max(1, rt.height);
+                float baseHeight = Mathf.Max(0.01f, Mathf.Max(target.halfHeight * 1.08f, target.halfWidth * 1.08f / aspect) * 2f);
+                float zoom = Mathf.Clamp(contentZoom, 0.05f, 8f);
+                float visibleHeight = baseHeight / zoom;
                 renderCamera.aspect = aspect;
                 renderCamera.orthographic = true;
-                renderCamera.orthographicSize = Mathf.Max(0.005f, Mathf.Max(target.halfHeight * 1.08f, target.halfWidth * 1.08f / aspect));
+                renderCamera.orthographicSize = Mathf.Max(0.005f, visibleHeight * 0.5f);
 
                 float distance = Mathf.Max(2f, target.radius * 4f);
                 Vector3 eye = target.center + target.faceCamera * distance;
+                if (panNormalized.x != 0f || panNormalized.y != 0f)
+                {
+                    // 平移相机而不是平移模型：正交相机下画面效果一样，但不会影响光照方向 / 描边方向。
+                    eye += target.right * (panNormalized.x * visibleHeight) + target.up * (panNormalized.y * visibleHeight);
+                }
                 renderCamera.transform.position = eye;
                 renderCamera.transform.rotation = Quaternion.LookRotation(-target.faceCamera, target.up);
                 renderCamera.nearClipPlane = Mathf.Max(0.02f, distance - target.radius * 2f);

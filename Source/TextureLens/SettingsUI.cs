@@ -57,6 +57,7 @@ namespace TextureLens
             SliderRow(listing, "TextureLens_PreviewZoom", ref s.previewZoom, 0.2f, 3f);
             SliderRow(listing, "TextureLens_PreviewContentZoom", ref s.previewContentZoom, 0.5f, 4f);
             ToggleRow(listing, "TextureLens_PreviewTransparent", ref s.previewTransparent);
+            ToggleRow(listing, "TextureLens_PreviewShow3D", ref s.previewShow3D);
             SliderRow(listing, "TextureLens_PreviewRefresh", ref s.previewRefreshInterval, 0.02f, 1f);
 
             Section(listing, "TextureLens_SectionFeatures");

@@ -54,6 +54,7 @@
   <TextureLens_AnimatedSuffix>（动画）</TextureLens_AnimatedSuffix>
   <TextureLens_PreviewContentZoom>内容缩放: {0:F1}x</TextureLens_PreviewContentZoom>
   <TextureLens_PreviewTransparent>透明背景（只显示角色）</TextureLens_PreviewTransparent>
+  <TextureLens_PreviewShow3D>角色预览用 IsoRim 3D 模型（需要 IsoRim Waylith）</TextureLens_PreviewShow3D>
   <TextureLens_PreviewControls>滚轮: 窗口大小 · Ctrl+滚轮: 缩放内容 · Ctrl+拖动: 平移 · 双击: 复位</TextureLens_PreviewControls>
   <TextureLens_PreviewShowTab>显示预览</TextureLens_PreviewShowTab>
   <TextureLens_PreviewShowTabTip>重新打开角色预览窗</TextureLens_PreviewShowTabTip>
